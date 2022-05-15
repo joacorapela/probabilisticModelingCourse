@@ -48,12 +48,12 @@ def filterLDS(y, A, Q, m0, V0, C, R):
     xnn1[:, 0, 0] = (A @ m0).squeeze()
     Vnn1[:, :, 0] = A @ V0 @ A.T + Q
     Stmp = C @ Vnn1[:, :, 0] @ C.T + R
-    Sn[:, :, 0] = (Stmp + np.transpose(Stmp, 0, 1)) / 2
+    Sn[:, :, 0] = (Stmp + Stmp.T) / 2
     Sinv = np.linalg.inv(Sn[:, :, 0])
     K = Vnn1[:, :, 0] @ C.T @ Sinv
     innov[:, 0, 0] = y[:, 0] - (C @  xnn1[:, :, 0]).squeeze()
-    xnn[:, :, 0] = None # replace None by the appropriate expression
-    Vnn[:, :, 0] = None # replace None by the appropriate expression
+    xnn[:, :, 0] = xnn1[:, :, 0] + K @ innov[:, :, 0]
+    Vnn[:, :, 0] = Vnn1[:, :, 0] - K @ C @ Vnn1[:, :, 0]
     logLike = -N*P*np.log(2*np.pi) - np.linalg.slogdet(Sn[:, :, 0])[1] - \
         innov[:, :, 0].T @ Sinv @ innov[:, :, 0]
 
@@ -70,8 +70,8 @@ def filterLDS(y, A, Q, m0, V0, C, R):
             Sinv = np.linalg.inv(Sn[:, :, k])
             K = Vnn1[:, :, k] @ C.T @ Sinv
             innov[:, 0, k] = y[:, k] - (C @ xnn1[:, :, k]).squeeze()
-            xnn[:, :, k] = None # replace None by the appropriate expression
-            Vnn[:, :, k] = None # replace None by the appropriate expression
+            xnn[:, :, k] = xnn1[:, :, k] + K @ innov[:, :, k]
+            Vnn[:, :, k] = Vnn1[:, :, k] - K @ C @ Vnn1[:, :, k]
         logLike = logLike-np.linalg.slogdet(Sn[:, :, k])[1] -\
             innov[:, :, k].T @ Sinv @ innov[:, :, k]
     logLike = 0.5 * logLike
@@ -113,12 +113,14 @@ def smoothLDS(A, xnn, Vnn, xnn1, Vnn1, m0, V0):
     VnN = np.empty(shape=[M, M, N])
     Jn = np.empty(shape=[M, M, N])
 
-    xnN[:, :, -1] = None # replace None by the appropriate expression
-    VnN[:, :, -1] = None # replace None by the appropriate expression
+    xnN[:, :, -1] = xnn[:, :, -1]
+    VnN[:, :, -1] = Vnn[:, :, -1]
     for n in reversed(range(1, N)):
         Jn[:, :, n-1] = Vnn[:, :, n-1] @ A.T @ np.linalg.inv(Vnn1[:, :, n])
-        xnN[:, :, n-1] = None # replace None by the appropriate expression
-        VnN[:, :, n-1] = None # replace None by the appropriate expression
+        xnN[:, :, n-1] = xnn[:, :, n-1] + \
+            Jn[:, :, n-1] @ (xnN[:, :, n]-xnn1[:, :, n])
+        VnN[:, :, n-1] = Vnn[:, :, n-1] + \
+            Jn[:, :, n-1] @ (VnN[:, :, n]-Vnn1[:, :, n]) @ Jn[:, :, n-1].T
     # initial state x00 and V00
     # return the smooth estimates of the state at time 0: x0N and V0N
     J0 = V0 @ A.T @ np.linalg.inv(Vnn1[:, :, 0])
