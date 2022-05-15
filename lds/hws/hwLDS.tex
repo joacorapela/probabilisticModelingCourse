@@ -1,6 +1,7 @@
 \documentclass{article}
 
 \usepackage[hypertexnames=false,colorlinks=true]{hyperref}
+\usepackage[shortlabels]{enumitem}
 
 \title{Linear Dynamical Systems homework}
 \author{}
@@ -10,14 +11,20 @@
 
 \maketitle
 
-\section*{Problem 1: simulation of LDS}
+\section*{Problem 1: simulation of an LDS}
 
-Use the parameters in this
-\href{https://github.com/joacorapela/probabilisticModelingCourse/blob/master/lds/data/00000002_simulation_params.npz}{file}
-to sample states and observations from a LDS. Save the sampled values to use
-them on the next problem. Make a scatter plot with the first and second
-dimensions of the sampled states and obserfvations on the x- and y-axis,
-respectively.
+\begin{enumerate}[(a)]
+
+    \item Use the parameters in this
+        \href{https://github.com/joacorapela/probabilisticModelingCourse/blob/master/lds/data/00000002_simulation_params.npz}{file}
+        to sample N=10,000 states and observations from an LDS. Save the
+        sampled values to use them on the next problem.
+
+    \item Make a scatter plot with a trace with the first versus the second
+        dimensions of the sampled states, and another trace with the first
+        versus the second dimensions of the sampled observations.
+
+\end{enumerate}
 
 The parameters in the previous file were used to generate the corresponding
 figure in the lectures notes. Hence your figure should be similar to the one on
@@ -25,24 +32,31 @@ these notes.
 
 \section*{Problem 2: inference in an LDS}
 
-Filter and smooth the simulated observations from the previous problem. The
-following Python
-\href{https://github.com/joacorapela/probabilisticModelingCourse/blob/master/lds/code/src/inference.py}{module}
-provides incomplete code to perform Kalman filtering and smoothing. You may
-want to complete this code to solve this problem.
+\begin{enumerate}[(a)]
 
-Generate a first scatter plot as in the previous problem, showing the state
-vertical and horizontal positions, the vertical and horizonal observation, and
-the filtered and smoothed observations.
+    \item Filter and smooth the simulated observations from the previous
+        problem. The following Python
+        \href{https://github.com/joacorapela/probabilisticModelingCourse/blob/master/lds/code/src/inference.py}{module}
+        provides incomplete functions to perform Kalman filtering and
+        smoothing. You may want to complete these functions to solve this
+        problem.
 
-Generate a second scatter plot displaying the state, filtered and smoothed
-vertical and horizontal velocities as a function of sample number. This plot
-should contain six traces: \texttt{state\_vel\_x}, \texttt{filtered\_vel\_x},
-\texttt{smoothed\_vel\_x}, \texttt{state\_vel\_y}, \texttt{filtered\_vel\_y} and
-\texttt{smoothed\_vel\_y}.
+    \item Generate a first scatter plot as in the previous problem, showing the
+        state vertical and horizontal positions, the vertical and horizonal
+        observation, and the filtered and smoothed observations.
 
-Generate a third scatter plot displaying the state, filtered and smoothed
-vertical and horizontal acelerations as a function of sample number.
+        Generate a second scatter plot displaying the state, filtered and
+        smoothed vertical and horizontal velocities as a function of sample
+        number. This plot should contain six traces: \texttt{state\_vel\_x},
+        \texttt{filtered\_vel\_x}, \texttt{smoothed\_vel\_x},
+        \texttt{state\_vel\_y}, \texttt{filtered\_vel\_y} and
+        \texttt{smoothed\_vel\_y}.
+
+        Generate a third scatter plot displaying the state, filtered and
+        smoothed vertical and horizontal acelerations as a function of sample
+        number.
+
+\end{enumerate}
 
 \end{document}
 
